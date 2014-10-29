@@ -28,6 +28,7 @@ android {
     buildToolsVersion "21.0.2"
 
     defaultConfig {
+        applicationId "com.gdggranada.devfest.app"
         minSdkVersion 14
         targetSdkVersion 21
     }
