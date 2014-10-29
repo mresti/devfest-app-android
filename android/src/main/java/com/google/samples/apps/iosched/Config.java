@@ -36,6 +36,9 @@ public class Config {
     // Is this an internal dogfood build?
     public static final boolean IS_DOGFOOD_BUILD = false;
 
+    // Switch to enable Nearby feature
+    public static final boolean ENABLE_NEARBY_FEATURE = false;
+
     // Warning messages for dogfood build
     public static final String DOGFOOD_BUILD_WARNING_TITLE = "Test build";
     public static final String DOGFOOD_BUILD_WARNING_TEXT = "This is a test build.";

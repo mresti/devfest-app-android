@@ -35,6 +35,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.samples.apps.iosched.Config;
 import com.google.samples.apps.iosched.R;
 import com.google.samples.apps.iosched.nearby.MetadataResolver;
 import com.google.samples.apps.iosched.nearby.NearbyDeviceManager;
@@ -171,7 +172,7 @@ public abstract class BaseMapActivity extends BaseActivity implements NearbyFrag
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (mNearbyCapable) {
+        if (Config.ENABLE_NEARBY_FEATURE && mNearbyCapable) {
             getMenuInflater().inflate(R.menu.nearby, menu);
             MenuItem nearbyItem = menu.findItem(R.id.menu_nearby);
             mNearbyButton =

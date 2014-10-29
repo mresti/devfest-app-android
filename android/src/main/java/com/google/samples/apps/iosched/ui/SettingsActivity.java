@@ -25,6 +25,7 @@ import android.support.v4.content.IntentCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.google.samples.apps.iosched.Config;
 import com.google.samples.apps.iosched.R;
 import com.google.samples.apps.iosched.service.SessionCalendarService;
 import com.google.samples.apps.iosched.util.PrefUtils;
@@ -77,7 +78,7 @@ public class SettingsActivity extends BaseActivity {
         private void setupSimplePreferencesScreen() {
             // Add 'general' preferences.
             addPreferencesFromResource(R.xml.preferences);
-            if (PrefUtils.hasEnabledBle(getActivity())) {
+            if (Config.ENABLE_NEARBY_FEATURE && PrefUtils.hasEnabledBle(getActivity())) {
                 addPreferencesFromResource(R.xml.ble_preferences);
             }
         }

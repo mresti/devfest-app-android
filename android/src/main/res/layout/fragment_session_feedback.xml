@@ -40,9 +40,7 @@
                 style="@style/TextHeader" />
 
             <!-- Q0 -->
-            <TextView style="@style/FeedbackQuestion"
-                android:text="@string/session_rating_label"
-                android:textAlignment="viewStart" />
+
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -197,7 +195,6 @@
                 android:drawablePadding="8dp"
                 android:gravity="center_vertical"
                 android:layout_gravity="center"
-                android:textStyle="@integer/font_textStyle_medium"
                 android:fontFamily="@string/font_fontFamily_medium"
                 android:textAllCaps="true"
                 android:textColor="#fff"

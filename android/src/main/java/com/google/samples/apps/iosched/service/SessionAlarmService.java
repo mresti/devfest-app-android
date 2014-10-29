@@ -44,7 +44,6 @@ import com.google.samples.apps.iosched.provider.ScheduleContract;
 import com.google.samples.apps.iosched.ui.BaseMapActivity;
 import com.google.samples.apps.iosched.ui.BrowseSessionsActivity;
 import com.google.samples.apps.iosched.ui.MyScheduleActivity;
-import com.google.samples.apps.iosched.ui.SessionFeedbackActivity;
 import com.google.samples.apps.iosched.util.FeedbackUtils;
 import com.google.samples.apps.iosched.util.PrefUtils;
 import com.google.samples.apps.iosched.util.UIUtils;
@@ -70,10 +69,6 @@ public class SessionAlarmService extends IntentService
 
     public static final String ACTION_NOTIFY_SESSION =
             "com.google.samples.apps.iosched.action.NOTIFY_SESSION";
-    public static final String ACTION_NOTIFY_SESSION_FEEDBACK =
-            "com.google.samples.apps.iosched.action.NOTIFY_SESSION_FEEDBACK";
-    public static final String ACTION_SCHEDULE_FEEDBACK_NOTIFICATION =
-            "com.google.samples.apps.iosched.action.SCHEDULE_FEEDBACK_NOTIFICATION";
     public static final String ACTION_SCHEDULE_STARRED_BLOCK =
             "com.google.samples.apps.iosched.action.SCHEDULE_STARRED_BLOCK";
     public static final String ACTION_SCHEDULE_ALL_STARRED_BLOCKS =
@@ -145,10 +140,6 @@ public class SessionAlarmService extends IntentService
             scheduleAllStarredBlocks();
             scheduleAllStarredSessionFeedbacks();
             return;
-        } else if (ACTION_NOTIFY_SESSION_FEEDBACK.equals(action)) {
-            LOGD(TAG, "Showing session feedback notification.");
-            notifySessionFeedback(DEBUG_SESSION_ID.equals(intent.getStringExtra(EXTRA_SESSION_ID)));
-            return;
         }
 
         final long sessionEnd = intent.getLongExtra(SessionAlarmService.EXTRA_SESSION_END,
@@ -162,21 +153,6 @@ public class SessionAlarmService extends IntentService
                 intent.getLongExtra(SessionAlarmService.EXTRA_SESSION_ALARM_OFFSET,
                         UNDEFINED_ALARM_OFFSET);
         LOGD(TAG, "Session alarm offset is: " + sessionAlarmOffset);
-
-        // Feedback notifications have a slightly different set of extras.
-        if (ACTION_SCHEDULE_FEEDBACK_NOTIFICATION.equals(action)) {
-            final String sessionId = intent.getStringExtra(SessionAlarmService.EXTRA_SESSION_ID);
-            final String sessionTitle = intent.getStringExtra(
-                    SessionAlarmService.EXTRA_SESSION_TITLE);
-            if (sessionTitle == null || sessionEnd == UNDEFINED_VALUE ||
-                    sessionId == null) {
-                LOGE(TAG, "Attempted to schedule for feedback without providing extras.");
-                return;
-            }
-            LOGD(TAG, "Scheduling feedback alarm for session: " + sessionTitle);
-            scheduleFeedbackAlarm(sessionEnd, sessionAlarmOffset, sessionTitle);
-            return;
-        }
 
         final long sessionStart =
                 intent.getLongExtra(SessionAlarmService.EXTRA_SESSION_START, UNDEFINED_VALUE);
@@ -214,16 +190,6 @@ public class SessionAlarmService extends IntentService
         LOGD(TAG, "Scheduling session feedback alarm for session '" + sessionTitle + "'");
         LOGD(TAG, "  -> end time: " + sessionEnd + " = " + (new Date(sessionEnd)).toString());
         LOGD(TAG, "  -> alarm time: " + alarmTime + " = " + (new Date(alarmTime)).toString());
-
-        final Intent feedbackIntent = new Intent(
-                ACTION_NOTIFY_SESSION_FEEDBACK,
-                null,
-                this,
-                SessionAlarmService.class);
-        PendingIntent pi = PendingIntent.getService(
-                this, 1, feedbackIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-        final AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        am.set(AlarmManager.RTC_WAKEUP, alarmTime, pi);
     }
 
     private void scheduleAlarm(final long sessionStart,
@@ -274,121 +240,6 @@ public class SessionAlarmService extends IntentService
         // Schedule an alarm to be fired to notify user of added sessions are about to begin.
         LOGD(TAG, "-> Scheduling RTC_WAKEUP alarm at " + alarmTime);
         am.set(AlarmManager.RTC_WAKEUP, alarmTime, pi);
-    }
-
-    // A starred session is about to end; notify the user to provide session feedback.
-    // Constructs and triggers a system notification. Does nothing if the session has already
-    // concluded.
-    private void notifySessionFeedback(boolean debug) {
-        LOGD(TAG, "Considering firing notification for session feedback.");
-
-        if (debug) {
-            LOGD(TAG, "Note: this is a debug notification.");
-        }
-
-        // Don't fire notification if this feature is disabled in settings
-        if (!PrefUtils.shouldShowSessionFeedbackReminders(this)) {
-            LOGD(TAG, "Skipping session feedback notification. Disabled in settings.");
-            return;
-        }
-
-        final Cursor c = getContentResolver().query(
-                ScheduleContract.Sessions.CONTENT_MY_SCHEDULE_URI,
-                SessionsNeedingFeedbackQuery.PROJECTION,
-                SessionsNeedingFeedbackQuery.WHERE_CLAUSE, null, null);
-        if (c == null) {
-            return;
-        }
-
-        List<String> needFeedbackIds = new ArrayList<String>();
-        List<String> needFeedbackTitles = new ArrayList<String>();
-        while (c.moveToNext()) {
-            String sessionId = c.getString(SessionsNeedingFeedbackQuery.SESSION_ID);
-            String sessionTitle = c.getString(SessionsNeedingFeedbackQuery.SESSION_TITLE);
-
-            // Avoid repeated notifications.
-            if (UIUtils.isFeedbackNotificationFiredForSession(this, sessionId)) {
-                LOGD(TAG, "Skipping repeated session feedback notification for session '"
-                        + sessionTitle + "'");
-                continue;
-            }
-
-            needFeedbackIds.add(sessionId);
-            needFeedbackTitles.add(sessionTitle);
-        }
-
-        if (needFeedbackIds.size() == 0) {
-            // the user has already been notified of all sessions needing feedback
-            return;
-        }
-
-        LOGD(TAG, "Going forward with session feedback notification for "
-                + needFeedbackIds.size() + " session(s).");
-
-        final Resources res = getResources();
-
-        // this is used to synchronize deletion of notifications on phone and wear
-        Intent dismissalIntent = new Intent(ACTION_NOTIFICATION_DISMISSAL);
-        // TODO: fix Wear dismiss integration
-        //dismissalIntent.putExtra(KEY_SESSION_ID, sessionId);
-        PendingIntent dismissalPendingIntent = PendingIntent
-                .getService(this, (int) new Date().getTime(), dismissalIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT);
-
-        String provideFeedbackTicker = res.getString(R.string.session_feedback_notification_ticker);
-        NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(this)
-                .setColor(getResources().getColor(R.color.theme_primary))
-                .setContentText(provideFeedbackTicker)
-                .setTicker(provideFeedbackTicker)
-                .setLights(
-                        SessionAlarmService.NOTIFICATION_ARGB_COLOR,
-                        SessionAlarmService.NOTIFICATION_LED_ON_MS,
-                        SessionAlarmService.NOTIFICATION_LED_OFF_MS)
-                .setSmallIcon(R.drawable.ic_stat_notification)
-                .setPriority(Notification.PRIORITY_LOW)
-                .setLocalOnly(true) // make it local to the phone
-                .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
-                .setDeleteIntent(dismissalPendingIntent)
-                .setAutoCancel(true);
-
-        if (needFeedbackIds.size() == 1) {
-            // Only 1 session needs feedback
-            Uri sessionUri = ScheduleContract.Sessions.buildSessionUri(needFeedbackIds.get(0));
-            PendingIntent pi = TaskStackBuilder.create(this)
-                    .addNextIntent(new Intent(this, MyScheduleActivity.class))
-                    .addNextIntent(new Intent(Intent.ACTION_VIEW, sessionUri, this,
-                            SessionFeedbackActivity.class))
-                    .getPendingIntent(1, PendingIntent.FLAG_CANCEL_CURRENT);
-
-            notifBuilder.setContentTitle(needFeedbackTitles.get(0))
-                    .setContentIntent(pi);
-        } else {
-            // Show information about several sessions that need feedback
-            PendingIntent pi = TaskStackBuilder.create(this)
-                    .addNextIntent(new Intent(this, MyScheduleActivity.class))
-                    .getPendingIntent(1, PendingIntent.FLAG_CANCEL_CURRENT);
-
-            NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-            inboxStyle.setBigContentTitle(provideFeedbackTicker);
-            for (String title : needFeedbackTitles) {
-                inboxStyle.addLine(title);
-            }
-
-            notifBuilder.setContentTitle(
-                    getResources().getQuantityString(R.plurals.session_plurals,
-                            needFeedbackIds.size(), needFeedbackIds.size()))
-                    .setStyle(inboxStyle)
-                    .setContentIntent(pi);
-        }
-
-        NotificationManager nm = (NotificationManager) getSystemService(
-                Context.NOTIFICATION_SERVICE);
-        LOGD(TAG, "Now showing session feedback notification!");
-        nm.notify(FEEDBACK_NOTIFICATION_ID, notifBuilder.build());
-
-        for (int i = 0; i < needFeedbackIds.size(); i++) {
-            setupNotificationOnWear(needFeedbackIds.get(i), null, needFeedbackTitles.get(i), null);
-        }
     }
 
     /**

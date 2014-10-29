@@ -38,19 +38,6 @@ public class ShowFeedbackNotificationAction implements DebugAction {
         final String sessionTitle = "Debugging with Placeholder Text";
         final String sessionRoom = "Room 1";
         final String sessionSpeaker = "Lauren Ipsum";
-
-        Intent intent = new Intent(
-                SessionAlarmService.ACTION_NOTIFY_SESSION_FEEDBACK,
-                null, context, SessionAlarmService.class);
-        intent.putExtra(SessionAlarmService.EXTRA_SESSION_ID, sessionId);
-        intent.putExtra(SessionAlarmService.EXTRA_SESSION_START, System.currentTimeMillis()
-                - 30 * 60 * 1000);
-        intent.putExtra(SessionAlarmService.EXTRA_SESSION_END, System.currentTimeMillis());
-        intent.putExtra(SessionAlarmService.EXTRA_SESSION_TITLE, sessionTitle);
-        intent.putExtra(SessionAlarmService.EXTRA_SESSION_ROOM, sessionRoom);
-        intent.putExtra(SessionAlarmService.EXTRA_SESSION_SPEAKERS, sessionSpeaker);
-        context.startService(intent);
-        Toast.makeText(context, "Showing debug session feedback notification.", Toast.LENGTH_LONG).show();
     }
 
     @Override
