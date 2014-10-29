@@ -743,14 +743,6 @@ public abstract class BaseActivity extends ActionBarActivity implements
                 HelpUtils.showAbout(this);
                 return true;
 
-            case R.id.menu_wifi:
-                WiFiUtils.showWiFiDialog(this);
-                return true;
-
-            case R.id.menu_i_o_hunt:
-                launchIoHunt();
-                return true;
-
             case R.id.menu_debug:
                 if (BuildConfig.DEBUG) {
                     startActivity(new Intent(this, DebugActionRunnerActivity.class));
@@ -889,11 +881,6 @@ public abstract class BaseActivity extends ActionBarActivity implements
     }
 
     protected void configureStandardMenuItems(Menu menu) {
-        MenuItem wifiItem = menu.findItem(R.id.menu_wifi);
-        if (wifiItem != null && !WiFiUtils.shouldOfferToSetupWifi(this, false)) {
-            wifiItem.setVisible(false);
-        }
-
         MenuItem debugItem = menu.findItem(R.id.menu_debug);
         if (debugItem != null) {
             debugItem.setVisible(BuildConfig.DEBUG);
@@ -909,11 +896,6 @@ public abstract class BaseActivity extends ActionBarActivity implements
         final MenuItem mapItem = menu.findItem(R.id.menu_map);
         if (mapItem != null) {
             mapItem.setVisible(isRemote);
-        }
-
-        MenuItem ioHuntItem = menu.findItem(R.id.menu_i_o_hunt);
-        if (ioHuntItem != null) {
-            ioHuntItem.setVisible(!isRemote && !TextUtils.isEmpty(Config.IO_HUNT_PACKAGE_NAME));
         }
     }
 
