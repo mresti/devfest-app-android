@@ -143,11 +143,9 @@ public abstract class BaseActivity extends ActionBarActivity implements
     protected static final int NAVDRAWER_ITEM_EXPLORE = 1;
     protected static final int NAVDRAWER_ITEM_MAP = 2;
     protected static final int NAVDRAWER_ITEM_SOCIAL = 3;
-    protected static final int NAVDRAWER_ITEM_VIDEO_LIBRARY = 4;
-    protected static final int NAVDRAWER_ITEM_SIGN_IN = 5;
-    protected static final int NAVDRAWER_ITEM_SETTINGS = 6;
-    protected static final int NAVDRAWER_ITEM_EXPERTS_DIRECTORY = 7;
-    protected static final int NAVDRAWER_ITEM_PEOPLE_IVE_MET = 8;
+    protected static final int NAVDRAWER_ITEM_SIGN_IN = 4;
+    protected static final int NAVDRAWER_ITEM_SETTINGS = 5;
+    protected static final int NAVDRAWER_ITEM_EXPERTS_DIRECTORY = 6;
     protected static final int NAVDRAWER_ITEM_INVALID = -1;
     protected static final int NAVDRAWER_ITEM_SEPARATOR = -2;
     protected static final int NAVDRAWER_ITEM_SEPARATOR_SPECIAL = -3;
@@ -158,11 +156,9 @@ public abstract class BaseActivity extends ActionBarActivity implements
             R.string.navdrawer_item_explore,
             R.string.navdrawer_item_map,
             R.string.navdrawer_item_social,
-            R.string.navdrawer_item_video_library,
             R.string.navdrawer_item_sign_in,
             R.string.navdrawer_item_settings,
-            R.string.navdrawer_item_experts_directory,
-            R.string.navdrawer_item_people_ive_met
+            R.string.navdrawer_item_experts_directory
     };
 
     // icons for navdrawer items (indices must correspond to above array)
@@ -466,11 +462,6 @@ public abstract class BaseActivity extends ActionBarActivity implements
         }
         mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR);
 
-        // If attendee is on-site, show the People I've Met item
-        if (attendeeAtVenue) {
-            mNavDrawerItems.add(NAVDRAWER_ITEM_PEOPLE_IVE_MET);
-        }
-
         // If the experts directory hasn't expired, show it
         if (!Config.hasExpertsDirectoryExpired()) {
             mNavDrawerItems.add(NAVDRAWER_ITEM_EXPERTS_DIRECTORY);
@@ -479,7 +470,6 @@ public abstract class BaseActivity extends ActionBarActivity implements
         // Other items that are always in the nav drawer irrespective of whether the
         // attendee is on-site or remote:
         mNavDrawerItems.add(NAVDRAWER_ITEM_SOCIAL);
-        mNavDrawerItems.add(NAVDRAWER_ITEM_VIDEO_LIBRARY);
         mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR_SPECIAL);
         mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
 
@@ -843,22 +833,12 @@ public abstract class BaseActivity extends ActionBarActivity implements
                 startActivity(intent);
                 finish();
                 break;
-            case NAVDRAWER_ITEM_PEOPLE_IVE_MET:
-                intent = new Intent(this, PeopleIveMetActivity.class);
-                startActivity(intent);
-                finish();
-                break;
             case NAVDRAWER_ITEM_SIGN_IN:
                 signInOrCreateAnAccount();
                 break;
             case NAVDRAWER_ITEM_SETTINGS:
                 intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
-                break;
-            case NAVDRAWER_ITEM_VIDEO_LIBRARY:
-                intent = new Intent(this, VideoLibraryActivity.class);
-                startActivity(intent);
-                finish();
                 break;
         }
     }

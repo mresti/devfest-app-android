@@ -100,7 +100,7 @@ public class VideoLibraryActivity extends BaseActivity implements VideoLibraryFr
 
     @Override
     protected int getSelfNavDrawerItem() {
-        return NAVDRAWER_ITEM_VIDEO_LIBRARY;
+        return -1;
     }
 
     @Override

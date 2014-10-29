@@ -26,6 +26,12 @@ import java.util.TimeZone;
 
 public class Config {
     // General configuration
+    // App Id (aka Name) at Google Cloud Console (aka Google API Console)
+    public static final String APP_ID_NAME_AT_GOOGLE_CLOUD_CONSOLE = "306219399262";
+
+    // App API Key at Google Cloud Console (aka Google API Console)
+    public static final String APP_API_KEY_AT_GOOGLE_CLOUD_CONSOLE = "AIzaSyBK00d8tsQZnHGshfTg4MRNTbKvkZkb2Mo";
+
 
     // Is this an internal dogfood build?
     public static final boolean IS_DOGFOOD_BUILD = false;
@@ -35,7 +41,7 @@ public class Config {
     public static final String DOGFOOD_BUILD_WARNING_TEXT = "This is a test build.";
 
     // Public data manifest URL
-    public static final String PROD_CONFERENCE_DATA_MANIFEST_URL = "";
+    public static final String PROD_CONFERENCE_DATA_MANIFEST_URL = "https://00e4a9513962da55d2a75d9c6ac2555247d0243b.googledrive.com/host/0B6yrWd0Ff8tbdHJZVHFuTEZxOTg/appDevfest/manifest.json";
 
     // Manifest URL override for Debug (staging) builds:
     public static final String MANIFEST_URL = PROD_CONFERENCE_DATA_MANIFEST_URL;
@@ -43,27 +49,23 @@ public class Config {
     public static final String BOOTSTRAP_DATA_TIMESTAMP = "Thu, 10 Apr 2014 00:01:03 GMT";
 
     // Conference hashtag
-    public static final String CONFERENCE_HASHTAG = "#io14";
+    public static final String CONFERENCE_HASHTAG = "#DevFestGRX";
 
     // Patterns that, when absent from a hashtag, will trigger the addition of the
     // CONFERENCE_HASHTAG on sharing snippets. Ex: "#Android" will be shared as "#io14 #Android",
     // but "#iohunt" won't be modified.
-    public static final String CONFERENCE_HASHTAG_PREFIX = "#io";
+    public static final String CONFERENCE_HASHTAG_PREFIX = "#DevFestGRX";
 
     // Hard-coded conference dates. This is hardcoded here instead of extracted from the conference
     // data to avoid the Schedule UI breaking if some session is incorrectly set to a wrong date.
     public static final int CONFERENCE_YEAR = 2014;
 
     public static final long[][] CONFERENCE_DAYS = new long[][] {
-            // start and end of day 1
-            { ParserUtils.parseTime("2014-06-25T07:00:00.000Z"),
-              ParserUtils.parseTime("2014-06-26T06:59:59.999Z") },
-            // start and end of day 2
-            { ParserUtils.parseTime("2014-06-26T07:00:00.000Z"),
-              ParserUtils.parseTime("2014-06-27T06:59:59.999Z") },
+            { ParserUtils.parseTime("2014-10-31T08:30:00.000+01:00"),
+              ParserUtils.parseTime("2014-10-31T14:15:00.000+01:00") },
         };
 
-    public static final TimeZone CONFERENCE_TIMEZONE = TimeZone.getTimeZone("America/Los_Angeles");
+    public static final TimeZone CONFERENCE_TIMEZONE = TimeZone.getTimeZone("Europe/Madrid");
 
     public static final long CONFERENCE_START_MILLIS = CONFERENCE_DAYS[0][0];
     public static final long CONFERENCE_END_MILLIS = CONFERENCE_DAYS[CONFERENCE_DAYS.length-1][1];
@@ -75,14 +77,14 @@ public class Config {
     public static final long DAY_MILLIS = 24 * HOUR_MILLIS;
 
     // OAuth 2.0 related config
-    public static final String APP_NAME = "GoogleIO-Android";
-    public static final String API_KEY = "";
+    public static final String APP_NAME = APP_ID_NAME_AT_GOOGLE_CLOUD_CONSOLE;
+    public static final String API_KEY = APP_API_KEY_AT_GOOGLE_CLOUD_CONSOLE;
 
     // Announcements
-    public static final String ANNOUNCEMENTS_PLUS_ID = "";
+    public static final String ANNOUNCEMENTS_PLUS_ID = "107621838547829286968";
 
     // YouTube API config
-    public static final String YOUTUBE_API_KEY = "";
+    public static final String YOUTUBE_API_KEY = APP_API_KEY_AT_GOOGLE_CLOUD_CONSOLE;
 
     // YouTube share URL
     public static final String YOUTUBE_SHARE_URL_PREFIX = "http://youtu.be/";
@@ -99,11 +101,11 @@ public class Config {
     public static final String GCM_SERVER_URL = "";
 
     // the GCM sender ID is the ID of the app in Google Cloud Console
-    public static final String GCM_SENDER_ID = "";
+    public static final String GCM_SENDER_ID = APP_ID_NAME_AT_GOOGLE_CLOUD_CONSOLE;
 
     // The registration api KEY in the gcm server (configured in the GCM
     // server's AuthHelper.java file)
-    public static final String GCM_API_KEY = "";
+    public static final String GCM_API_KEY = "REG-KEY-ANDROID-APP";
 
     // When do we start to offer to set up the user's wifi?
     public static final long WIFI_SETUP_OFFER_START =

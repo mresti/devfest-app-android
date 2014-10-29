@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Wearable/Wearable.iml" filepath="$PROJECT_DIR$/Wearable/Wearable.iml" />
       <module fileurl="file://$PROJECT_DIR$/android/android.iml" filepath="$PROJECT_DIR$/android/android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/iosched.iml" filepath="$PROJECT_DIR$/iosched.iml" />
+      <module fileurl="file://$PROJECT_DIR$/devfest-app-android.iml" filepath="$PROJECT_DIR$/devfest-app-android.iml" />
     </modules>
   </component>
 </project>
