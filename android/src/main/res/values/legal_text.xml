@@ -16,5 +16,7 @@
 -->
 
 <resources>
-    <string name="eula_legal_text">Your EULA text here.</string>
+    <string name="eula_legal_text">Aplicación oficial del GDG DevFest Android Granada 2014. Programa
+        el evento para no perderte nada, explora los detalles de las conferencias y de los ponentes.
+        Esta aplicación es un fork de la aplicacion Google IO 2014 de Google, Gracias.</string>
 </resources>
