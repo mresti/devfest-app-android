@@ -25,11 +25,11 @@ repositories {
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.0.2"
+    buildToolsVersion "21.1.2"
 
     defaultConfig {
         applicationId "com.gdggranada.devfest.app"
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 21
     }
 
@@ -54,7 +54,7 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            runProguard true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), file('proguard-project.txt')
             signingConfig signingConfigs.release
         }
